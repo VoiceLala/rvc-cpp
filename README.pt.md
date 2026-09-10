@@ -77,4 +77,3 @@ Agradecimentos ao [RVC Project](https://github.com/RVC-Project/Retrieval-based-V
 ## Conheça o VoiceLala
 
 Novas vozes e efeitos sonoros para jogos, transmissões e conversas. [Visite o VoiceLala →](https://voicelala.com/)
-

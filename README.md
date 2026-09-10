@@ -69,7 +69,7 @@ Copy-Item C:/sdk/onnxruntime/lib/onnxruntime.dll build/
 ctest --test-dir build --output-on-failure
 ```
 
-With three compatible, separately obtained models:
+This is a CPU build. Default tests do not load real-voice models. See the [build guide](docs/build.md) for full tests, DirectML and installation. Prepare three compatible models separately:
 
 ```powershell
 ./build/dvc_wav.exe voice.onnx content.onnx pitch.onnx 40000 768 input.wav output.wav
@@ -77,7 +77,7 @@ With three compatible, separately obtained models:
 
 The two numbers specify the voice model's output sample rate and content feature dimension. The example accepts mono PCM16/float32 WAV up to 30 seconds and writes PCM16 without overwriting an existing file. See [model details](docs/models.md); arbitrary RVC ONNX exports are not interchangeable.
 
-Include `dvc/dvc.h`, initialize configurations using the default functions, create a context, load models, call `dvc_convert` or `dvc_process`, and destroy the context. Errors are returned as status codes with thread-local details from `dvc_last_error`. Serialize calls to the same context. Streaming inference belongs on a worker thread, not an audio-device callback.
+Include `dvc/dvc.h`, initialize configurations using the default functions, create a context, load models, call `dvc_convert` or `dvc_process`, and destroy the context. Errors are returned as status codes with thread-local details from `dvc_last_error`. Serialize calls to the same context. `dvc_process` requires exactly `config.block_size` samples per call. Inference allocates memory and runs synchronously, so use a worker thread rather than an audio-device callback. See the [API reference](docs/api.md).
 
 ## License and acknowledgments
 

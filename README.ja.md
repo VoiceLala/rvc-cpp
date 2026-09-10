@@ -77,4 +77,3 @@ ctest --test-dir build --output-on-failure
 ## VoiceLala を体験
 
 ゲーム、配信、ボイスチャットに新しい声と効果音を。[VoiceLala を訪問 →](https://voicelala.com/)
-

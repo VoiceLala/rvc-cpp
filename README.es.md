@@ -77,4 +77,3 @@ Gracias a [RVC Project](https://github.com/RVC-Project/Retrieval-based-Voice-Con
 ## Descubre VoiceLala
 
 Nuevas voces y efectos para juegos, transmisiones y chats de voz. [Visita VoiceLala →](https://voicelala.com/)
-
