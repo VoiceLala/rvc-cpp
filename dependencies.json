@@ -1,0 +1,10 @@
+{
+  "onnxruntime_cpu_windows_x64": {
+    "version": "1.20.1",
+    "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.20.1/onnxruntime-win-x64-1.20.1.zip",
+    "sha256": "78d447051e48bd2e1e778bba378bec4ece11191c9e538cf7b2c4a4565e8f5581",
+    "source_commit": "5c1b7ccbff7e5141c1da7a9d963d660e5741c319",
+    "license": "MIT plus bundled third-party notices",
+    "sdk_directory": "onnxruntime-win-x64-1.20.1"
+  }
+}

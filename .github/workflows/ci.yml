@@ -1,0 +1,54 @@
+name: Windows CPU build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pinned CPU SDK
+        shell: pwsh
+        run: |
+          $sdk = (Get-Content dependencies.json -Raw | ConvertFrom-Json).onnxruntime_cpu_windows_x64
+          New-Item -ItemType Directory -Path .local -Force | Out-Null
+          Invoke-WebRequest -Uri $sdk.url -OutFile .local/ort.zip
+          $actual = (Get-FileHash .local/ort.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $sdk.sha256) { throw 'ONNX Runtime checksum mismatch' }
+          Expand-Archive .local/ort.zip .local
+          "ORT_SDK=$env:GITHUB_WORKSPACE/.local/$($sdk.sdk_directory)" >> $env:GITHUB_ENV
+      - name: Configure and build
+        shell: pwsh
+        run: |
+          python tests/make_fixtures.py build/fixtures
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 "-DONNXRUNTIME_ROOT=$env:ORT_SDK" "-DDVC_TEST_MODELS=$env:GITHUB_WORKSPACE/build/fixtures"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build --config Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item "$env:ORT_SDK/lib/onnxruntime.dll" build/Release/
+      - name: Test ABI, model protocol and WAV CLI
+        shell: pwsh
+        run: |
+          ctest --test-dir build -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python tests/wav_smoke.py build/Release/dvc_wav.exe build/fixtures
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/package_source.py --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Test installed CMake package
+        shell: pwsh
+        run: |
+          cmake --install build --config Release --prefix build/install
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake -S tests/consumer -B build/consumer -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$env:GITHUB_WORKSPACE/build/install"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/consumer --config Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item build/install/bin/dvc.dll build/consumer/Release/
+          Copy-Item "$env:ORT_SDK/lib/onnxruntime.dll" build/consumer/Release/
+          ./build/consumer/Release/consumer.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
