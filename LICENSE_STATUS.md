@@ -1,6 +1,6 @@
 # Licensing
 
-DVC is distributed under the [MIT License](LICENSE).
+RVC.cpp is distributed under the [MIT License](LICENSE).
 
 Third-party components retain their respective copyrights and licenses. See
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for component details and the

@@ -9,10 +9,12 @@ ROOT_FILES = {
     "CMakeLists.txt", "README.md", "README.en.md", "LICENSE", "LICENSE_STATUS.md",
     "THIRD_PARTY_NOTICES.md", "CONTRIBUTING.md", "CHANGELOG.md",
     ".gitignore", ".gitattributes", "dependencies.json",
+    "README.zh-CN.md", "README.ja.md", "README.ko.md", "README.de.md",
+    "README.fr.md", "README.es.md", "README.pt.md",
 }
 DIRECTORIES = {"include", "src", "cmake", "examples", "tests", "docs", "licenses", "scripts", ".github"}
 SUFFIXES = {".c", ".cpp", ".h", ".md", ".txt", ".py", ".cmake", ".in", ".yml", ".yaml", ".json"}
-IMAGE_FILES = {"docs/assets/dvc-banner.png"}
+IMAGE_FILES = {"docs/assets/rvc-cpp-banner.png"}
 
 
 def collect(root):
@@ -62,11 +64,11 @@ def main():
     if destination.is_symlink() or getattr(destination, "is_junction", lambda: False)():
         raise RuntimeError("Refusing linked output directory")
     destination.mkdir(exist_ok=True)
-    archive = destination / "dvc-0.1.0-dev-source.zip"
+    archive = destination / "rvc-cpp-0.1.0-dev-source.zip"
     payload["SOURCE_MANIFEST.json"] = (json.dumps(manifest, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
         for name, data in sorted(payload.items()):
-            entry = zipfile.ZipInfo("dvc/" + name, date_time=(1980, 1, 1, 0, 0, 0))
+            entry = zipfile.ZipInfo("rvc-cpp/" + name, date_time=(1980, 1, 1, 0, 0, 0))
             entry.compress_type = zipfile.ZIP_DEFLATED
             entry.external_attr = 0o100644 << 16
             output.writestr(entry, data)

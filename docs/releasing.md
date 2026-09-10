@@ -27,8 +27,8 @@ python scripts/package_source.py
 git init -b main
 git add .
 git diff --cached --stat
-git commit -m "Initial DVC source release"
-git remote add origin https://github.com/YOUR_ACCOUNT/dvc.git
+git commit -m "Initial RVC.cpp source release"
+git remote add origin https://github.com/YOUR_ACCOUNT/rvc-cpp.git
 git push -u origin main
 ```
 

@@ -26,14 +26,14 @@ cmake --install build --prefix install
 
 ## CMake 消费者
 
-安装 DVC 后：
+安装 RVC.cpp 后：
 
 ```cmake
 find_package(dvc CONFIG REQUIRED)
 target_link_libraries(my_app PRIVATE dvc::dvc)
 ```
 
-配置消费者时用 `-DCMAKE_PREFIX_PATH=.../install`。DVC 安装包含库和公共头文件，不自动打包 ONNX Runtime 或模型。运行程序时仍须让操作系统找到 DVC 和 ONNX Runtime 动态库。
+配置消费者时用 `-DCMAKE_PREFIX_PATH=.../install`。RVC.cpp 安装包含库和公共头文件，不自动打包 ONNX Runtime 或模型。运行程序时仍须让操作系统找到 RVC.cpp 和 ONNX Runtime 动态库。
 
 ## DirectML（实验性）
 

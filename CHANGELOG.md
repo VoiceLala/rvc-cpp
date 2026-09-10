@@ -1,5 +1,7 @@
 # Changelog
 
+Project renamed to **RVC.cpp** (`VoiceLala/rvc-cpp`). English is now the default README, with Chinese, Japanese, Korean, German, French, Spanish and Portuguese translations. Existing `dvc` API and build target names remain compatible.
+
 ## 0.1.0-dev — 2026-09-10
 
 - Prepared standalone C++17 / ONNX Runtime library and C ABI.
