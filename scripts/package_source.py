@@ -12,6 +12,7 @@ ROOT_FILES = {
 }
 DIRECTORIES = {"include", "src", "cmake", "examples", "tests", "docs", "licenses", "scripts", ".github"}
 SUFFIXES = {".c", ".cpp", ".h", ".md", ".txt", ".py", ".cmake", ".in", ".yml", ".yaml", ".json"}
+IMAGE_FILES = {"docs/assets/dvc-banner.png"}
 
 
 def collect(root):
@@ -28,7 +29,7 @@ def collect(root):
         for path in sorted(directory.rglob("*")):
             if path.is_symlink() or getattr(path, "is_junction", lambda: False)():
                 raise RuntimeError(f"Refusing filesystem link: {path}")
-            if path.is_file() and path.suffix in SUFFIXES and "__pycache__" not in path.parts:
+            if path.is_file() and (path.suffix in SUFFIXES or path.relative_to(root).as_posix() in IMAGE_FILES) and "__pycache__" not in path.parts:
                 if not path.resolve().is_relative_to(root):
                     raise RuntimeError(f"Path escapes source root: {path}")
                 found.append(path)
@@ -44,7 +45,11 @@ def main():
     payload = {}
     for path in files:
         data = path.read_bytes()
-        data.decode("utf-8-sig")  # Reject unexpected binary payloads in source files.
+        if path.relative_to(root).as_posix() in IMAGE_FILES:
+            if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise RuntimeError(f"Invalid PNG asset: {path.name}")
+        else:
+            data.decode("utf-8-sig")  # Reject unexpected binary payloads in source files.
         payload[path.relative_to(root).as_posix()] = data
     if "MIT License" not in payload["LICENSE"].decode():
         raise RuntimeError("Review the packaging policy if the project license changes")

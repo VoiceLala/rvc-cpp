@@ -1,20 +1,49 @@
-# DVC
+<p align="center">
+  <a href="https://voicelala.com/">
+    <img src="docs/assets/dvc-banner.png" alt="DVC — Native voice conversion by VoiceLala" width="100%">
+  </a>
+</p>
 
-**把 AI 变声接入你的应用。**
+<h1 align="center">DVC</h1>
+<p align="center"><strong>把 AI 变声接入你的应用。</strong></p>
 
-[VoiceLala](https://voicelala.com/) · [English](README.en.md) · [构建](docs/build.md) · [模型协议](docs/models.md) · [API](docs/api.md) · [MIT](LICENSE)
+<p align="center">
+  <a href="https://github.com/VoiceLala/dvc/actions/workflows/ci.yml"><img src="https://github.com/VoiceLala/dvc/actions/workflows/ci.yml/badge.svg" alt="Windows CPU build"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b5cf6" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/C%2B%2B-17-3b82f6" alt="C++17">
+  <img src="https://img.shields.io/badge/status-experimental-f59e0b" alt="Experimental">
+  <a href="https://voicelala.com/"><img src="https://img.shields.io/badge/VoiceLala-visit%20website-06b6d4" alt="Visit VoiceLala"></a>
+</p>
 
-想探索游戏、直播和语音聊天中的更多声音玩法？访问 **[VoiceLala — AI 实时变声与音效](https://voicelala.com/)**，了解产品、浏览音色，找到适合你的声音。
+[简体中文](README.md) · [English](README.en.md) · [构建指南](docs/build.md) · [API 参考](docs/api.md) · [模型协议](docs/models.md)
+
+---
 
 DVC 是一个基于 C++17 和 ONNX Runtime 的声音转换库，面向需要集成本地音频转换与流式推理的开发者。它将内容特征提取、F0 提取和 RVC 风格声音合成连接成原生推理链路，通过 C ABI 供应用调用，推理运行时无需 Python。
 
-## 特性
+## 为原生应用准备的声音转换
 
-- **原生集成**：C 接口、UTF-8 模型路径和明确的错误码，方便通过 FFI 接入其他语言。
-- **离线与流式转换**：支持完整音频片段，以及带上下文、SOLA 对齐和交叉淡化的分块处理。
-- **灵活调音**：可配置升降调、说话人、噪声强度和随机种子。
-- **独立实例**：每个实例拥有自己的模型会话和推理状态。
-- **简洁依赖**：使用 ONNX Runtime 执行模型，提供 CMake 构建和 WAV 示例。
+| 接入应用 | 处理音频 | 控制声音 |
+| :--- | :--- | :--- |
+| **C ABI · C++17**<br>UTF-8 模型路径、明确错误码，方便通过 FFI 调用。 | **离线 · 流式**<br>整段转换，或带上下文、SOLA 对齐与交叉淡化的分块处理。 | **音高 · 说话人**<br>配置升降调、speaker id、噪声强度与随机种子。 |
+
+每个实例独立维护模型会话与推理状态。通过 CMake 集成，推理运行时无需 Python。
+
+## 从输入到声音
+
+```mermaid
+flowchart LR
+    A[输入音频] --> B[内容特征 · ONNX]
+    A --> C[F0 提取 · ONNX]
+    B --> D[声音合成 · ONNX]
+    C --> D
+    P[音高 / 说话人 / 噪声] --> D
+    D --> E[输出音频]
+```
+
+流式模式在分块推理基础上加入历史上下文、SOLA 对齐和交叉淡化。三个模型的张量约定见 [模型协议](docs/models.md)。
+
+> **想先体验变声？** 前往 [VoiceLala](https://voicelala.com/)，探索游戏、直播与语音聊天中的 AI 变声和音效玩法。
 
 ## 支持范围
 
@@ -34,6 +63,11 @@ DVC 是一个基于 C++17 和 ONNX Runtime 的声音转换库，面向需要集�
 当前提供进程内 C API，未内置 HTTP、WebSocket 或 gRPC 服务。版本 `0.1.0-dev` 为实验版本，已通过合成模型功能测试；真实音色质量、持续实时性能及 GPU 运行仍待验证，详见 [验证记录](docs/validation.md)。
 
 ## 快速开始
+
+```sh
+git clone https://github.com/VoiceLala/dvc.git
+cd dvc
+```
 
 需要 CMake 3.24+、C++17 编译器和 ONNX Runtime C/C++ SDK。Windows 建议使用 Visual Studio 的 x64 开发者终端。SDK 放到任意目录，例如 `C:/sdk/onnxruntime`，其中应有 `include/` 和 `lib/`。
 

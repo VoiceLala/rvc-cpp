@@ -1,20 +1,49 @@
-# DVC
+<p align="center">
+  <a href="https://voicelala.com/">
+    <img src="docs/assets/dvc-banner.png" alt="DVC — Native voice conversion by VoiceLala" width="100%">
+  </a>
+</p>
 
-**Bring AI voice conversion to your application.**
+<h1 align="center">DVC</h1>
+<p align="center"><strong>Bring AI voice conversion to your application.</strong></p>
 
-[VoiceLala](https://voicelala.com/) · [中文](README.md) · [Build](docs/build.md) · [Model contract](docs/models.md) · [API](docs/api.md) · [MIT](LICENSE)
+<p align="center">
+  <a href="https://github.com/VoiceLala/dvc/actions/workflows/ci.yml"><img src="https://github.com/VoiceLala/dvc/actions/workflows/ci.yml/badge.svg" alt="Windows CPU build"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8b5cf6" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/C%2B%2B-17-3b82f6" alt="C++17">
+  <img src="https://img.shields.io/badge/status-experimental-f59e0b" alt="Experimental">
+  <a href="https://voicelala.com/"><img src="https://img.shields.io/badge/VoiceLala-visit%20website-06b6d4" alt="Visit VoiceLala"></a>
+</p>
 
-Discover more ways to sound different with **[VoiceLala](https://voicelala.com/)**. Explore AI voice changing and soundboard effects for gaming, streaming and voice chat.
+[English](README.en.md) · [简体中文](README.md) · [Build guide](docs/build.md) · [API reference](docs/api.md) · [Model contract](docs/models.md)
+
+---
 
 DVC is a C++17 / ONNX Runtime library for developers integrating local voice conversion into their applications. It connects a content encoder, an F0 model and an RVC-style ONNX synthesizer behind a C ABI. Python is not required at inference time.
 
 ## Features
 
-- C API with UTF-8 model paths and explicit error reporting.
-- Offline mono float32 conversion and fixed-block streaming with context, SOLA alignment and crossfade.
-- Pitch shifting, speaker selection, noise scale and reproducible seed configuration.
-- Independent model sessions and state for each context.
-- CMake integration and a WAV conversion example.
+| Integrate | Process | Tune |
+| :--- | :--- | :--- |
+| **C ABI · C++17**<br>UTF-8 paths and explicit errors for FFI integration. | **Offline · Streaming**<br>Whole clips or fixed blocks with context, SOLA and crossfade. | **Pitch · Speaker**<br>Pitch shifting, speaker selection, noise scale and seed configuration. |
+
+Each context owns its model sessions and inference state. Includes CMake integration and a WAV conversion example.
+
+## From audio to voice
+
+```mermaid
+flowchart LR
+    A[Input audio] --> B[Content encoder · ONNX]
+    A --> C[F0 extraction · ONNX]
+    B --> D[Voice synthesis · ONNX]
+    C --> D
+    P[Pitch / Speaker / Noise] --> D
+    D --> E[Output audio]
+```
+
+Streaming adds history, SOLA alignment and crossfade around block inference. See the [model contract](docs/models.md) for tensor requirements.
+
+> **Want to try voice changing?** Explore [VoiceLala](https://voicelala.com/) for AI voice changing and soundboard effects in games, streams and voice chat.
 
 ## Compatibility
 
@@ -22,7 +51,12 @@ The current validation target is Windows x64 CPU. DirectML is an optional build 
 
 The library provides an in-process C API; no HTTP, WebSocket or gRPC server is included. **0.1.0-dev is experimental.** Synthetic graph tests pass; real-voice quality, sustained real-time performance and GPU execution remain to be validated. See the [validation notes](docs/validation.md).
 
-## Build
+## Quick start
+
+```sh
+git clone https://github.com/VoiceLala/dvc.git
+cd dvc
+```
 
 Install CMake 3.24+, a C++17 compiler and an ONNX Runtime SDK containing `include/` and `lib/`. In an x64 Visual Studio developer terminal:
 
